@@ -88,15 +88,17 @@ class ReefElementAsset(JsonFileBase):
         )
         
         pack[namespace].item_models[path] = ItemModel({
-            "type": "minecraft:model",
-            "model": f"{namespace}:item/reef/{path}",
-            "transformation": [
-                json_data.size[0],  0,                 0,       translation_offset[0], 
-                0,                  json_data.size[1], 0,       translation_offset[1], 
-                0,                  0,                 1,                         0.5, 
-                0,                  0,                 0,                           1
-            ],
-            **({"tints": [{ "type": "minecraft:constant", "value": state.opts.tint }]} if state.opts.tint is not None else {})
+            "model": {
+                "type": "minecraft:model",
+                "model": f"{namespace}:item/reef/{path}",
+                "transformation": [
+                    json_data.size[0],  0,                 0,       translation_offset[0], 
+                    0,                  json_data.size[1], 0,       translation_offset[1], 
+                    0,                  0,                 1,                         0.5, 
+                    0,                  0,                 0,                           1
+                ],
+                **({"tints": [{ "type": "minecraft:constant", "value": state.opts.tint }]} if state.opts.tint is not None else {})
+            }
         })
         logger.debug("Generated item model definition for graphic asset")
     
@@ -126,7 +128,7 @@ class ReefElementAsset(JsonFileBase):
                 "credit": "Generated with Reef",
                 "parent": "reef:item/element_base",
                 "textures": {
-                    "image": f"json_data.texture/{i}",
+                    "image": f"{json_data.texture}/{i}",
                 }
             })
             
@@ -141,17 +143,18 @@ class ReefElementAsset(JsonFileBase):
         logger.debug("Generated models for animated element asset")
             
         pack[namespace].item_models[path] = ItemModel({
-            "type": "minecraft:range_dispatch",
-            "model": f"{namespace}:item/reef/{path}",
-            "property": "minecraft:custom_model_data",
-            "index": 0,
-            "entries": entries,
-            "transformation": [
-                json_data.size[0],  0,                 0,       translation_offset[0], 
-                0,                  json_data.size[1], 0,       translation_offset[1], 
-                0,                  0,                 1,                         0.5, 
-                0,                  0,                 0,                           1
-            ]
+            "model": {
+                "type": "minecraft:range_dispatch",
+                "property": "minecraft:custom_model_data",
+                "index": 0,
+                "entries": entries,
+                "transformation": [
+                    json_data.size[0],  0,                 0,       translation_offset[0], 
+                    0,                  json_data.size[1], 0,       translation_offset[1], 
+                    0,                  0,                 1,                         0.5, 
+                    0,                  0,                 0,                           1
+                ]
+            }
         })
         logger.debug("Generated item model definition for animated element asset")
 
