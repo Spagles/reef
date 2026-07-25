@@ -67,8 +67,6 @@ class ReefSpecialData(JsonFileBase):
     def bind(self, pack: DataPack, path: str):
         super().bind(pack, path)
         
-        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-        
         namespace, _, path = path.partition(":")
         
         self.generate_reef_mini_functions(pack, namespace, path)
