@@ -10,3 +10,6 @@ dist/
 **/test*
 src/data/*/reef/
 src/assets/*/reef/
+
+# modrinth readme
+MODRINTH_README.md
