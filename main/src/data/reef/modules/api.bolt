@@ -515,7 +515,7 @@ function ~/remote/linked_remote/open_slideshow_settings:
                 {
                     "type": "minecraft:text",
                     "key": "id",
-                    "width": 100,
+                    "width": 200,
                     "max_length": 2147483647,
                     "label": {
                         "text": "Slideshow Identifier",
@@ -532,7 +532,6 @@ function ~/remote/linked_remote/open_slideshow_settings:
                 }
             ],
             "pause": false,
-
             "actions": [
                 {
                     "label": {
@@ -583,7 +582,6 @@ function ~/remote/linked_remote/open_slideshow_settings:
                 }
             ],
             "pause": false,
-
             "actions": [
                 {
                     "label": {
