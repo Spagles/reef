@@ -15,8 +15,9 @@ from beet import (
 )
 
 from .. import state
-from ..models import ResourceLocation
+from ..models import NumberString, ResourceLocation
 from ..options import ReefPluginOptions
+from .page import ElementModel, PageModel
 
 __all__ = ["special", "ReefSpecialData"]
 
@@ -29,6 +30,9 @@ class ReefBaseSpecialDataModel(BaseModel):
     
     page_count: int
     """Page count of the slideshow"""
+    
+class ReefSpecialDataPdfPageModel(PageModel):
+    sequence: list[list[ElementModel]] | None = None # type: ignore
 
 class ReefSpecialDataPdfModel(ReefBaseSpecialDataModel):
     """A Reef Mini definition using PDF files."""
@@ -38,6 +42,9 @@ class ReefSpecialDataPdfModel(ReefBaseSpecialDataModel):
     
     pdf: ResourceLocation
     """Resource location pointing to the PDF file in `assets/<namespace>/reef/<path>`."""
+    
+    overrides: dict[NumberString, ReefSpecialDataPdfPageModel] | None = None
+    """Content overrides for specific pages."""
     
 class ReefSpecialDataItemModelModel(ReefBaseSpecialDataModel):
     """A Reef Mini definition using an item model definition file."""
