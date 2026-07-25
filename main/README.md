@@ -13,11 +13,20 @@
 <p align="center">
   <img src="../repository/slideshow_definitions.png" alt="Data-driven Slideshow Definitions with Beet integration">
   <img src="../repository/remote_ui.png" alt="Remote GUI">
+  <br />
+  <br />
+  <img src="../repository/element_header.png" alt="Element Types">
+  <br />
+  <img src="../repository/text_elements.gif" alt="Text Elements" style="display: inline;">
+  <img src="../repository/graphic_elements.gif" alt="Graphic Elements" style="display: inline;">
+  <img src="../repository/animated_graphic_element.gif" alt="Animated Graphic Elements" style="display: inline;">
+  <br />
+  <br />
+  <img src="../repository/transition_header.png" alt="Transitions">
+  <br />
+  <img src="../repository/slideshow_transition.gif" alt="A page transitioning to another page" width="420">
+  <img src="../repository/pdf_generation.png" alt="PDF Generation">
 </p>
-
-ALL ELEMENT TYPES SHOWCASE
-
-BEET PLUGIN SHOWCASE
 
 ## Credits
 - Author - [@trplnr](https://github.com/trplnr)
