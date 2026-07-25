@@ -1,0 +1,6 @@
+{
+    "type": "reef:animated_element",
+    "texture": "reef_summit:item/reef/transition/blue_slide_up",
+    "size": [528, 288],
+    "frames": 21
+}

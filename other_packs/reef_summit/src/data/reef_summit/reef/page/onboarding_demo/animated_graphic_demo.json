@@ -1,9 +1,9 @@
 {
-    "transition": "reef:blue_slide_up",
+    "transition": "reef_summit:onboarding_demo/blue_slide_up",
     "sequence": [
         [{
             "type": "graphic",
-            "model": "reef:graphic/yellow_gradient",
+            "model": "reef_summit:onboarding_demo/yellow_gradient",
             "pos": [0, 0, -0.01]
         }, {
             "type": "text",
@@ -13,7 +13,7 @@
         }],
         [{
             "type": "animated_graphic",
-            "model": "reef:animated_graphic/animation_text",
+            "model": "reef_summit:onboarding_demo/animation_text",
             "frames": 37,
             "pos": [13.5, -9, 0]
         }]
