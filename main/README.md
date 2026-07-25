@@ -15,8 +15,6 @@
   <img src="../repository/remote_ui.png" alt="Remote GUI">
 </p>
 
-REMOTE SHOWCASE
-
 ALL ELEMENT TYPES SHOWCASE
 
 BEET PLUGIN SHOWCASE
