@@ -4,6 +4,7 @@ from bolt_expressions import Scoreboard, Data
 
 function ~/load:
     DEV_LOGGER.info("@a", "api module loaded")
+    scoreboard objectives add reef.api.remote dummy
 
 function ~/tick:
     tag @a[advancements={reef:item/linked_remote/use=false},tag=reef.item.linked_remote.clicked_this_tick] remove reef.item.linked_remote.clicked_this_tick
@@ -169,17 +170,15 @@ item_modifier reef:item/remote/convert_to_unlinked_remote [
             "minecraft:max_stack_size": 1,
             "minecraft:consumable": {
                 "consume_seconds": 9999999
-            }
-        }
-    },
-    {
-        "function": "minecraft:set_custom_data",
-        "tag": {
-            "reef": {
-                "item": {
-                    "components": {
-                        "reef:link": {
-                            "linked": false
+            },
+            "minecraft:custom_data": {
+                "reef": {
+                    "item": {
+                        "id": "reef:remote",
+                        "components": {
+                            "reef:link": {
+                                "linked": false
+                            }
                         }
                     }
                 }
@@ -289,11 +288,11 @@ function ~/remote/linked_remote/listener:
     tag @s add reef.item.linked_remote.clicked_this_tick
 
 function ~/remote/unlinked_remote/listener:
-    execute as @s[tag=!reef.item.unlinked_remote.clicked_this_tick] run function ~/../link
+    execute as @s[tag=!reef.item.unlinked_remote.clicked_this_tick] run function ~/../link_id
         
     tag @s add reef.item.unlinked_remote.clicked_this_tick
 
-function ~/remote/unlinked_remote/link:
+function ~/remote/unlinked_remote/link_id:
     execute if entity @s[tag=!reef.permissions.use_remote] run return:
         LOGGER.error("@s", ["You are not allowed to use this item. ", {text: "(Missing permissions: reef.permissions.use_remote)", color: "dark_gray"}])
 
@@ -324,10 +323,21 @@ function ~/remote/unlinked_remote/link:
                     "italic": true
                 },
                 "max_length": 5
-            }
+            },
         ],
         "pause": false,
         "actions": [
+            {
+                "label": {
+                    "text": "Switch to tag mode",
+                    "color": "aqua",
+                },
+                "width": 100,
+                "action": {
+                    "type": "minecraft:run_command",
+                    "command": "function reef:api/remote/unlinked_remote/link_tag"
+                }
+            },
             {
                 "label": {
                     "text": "Link",
@@ -337,7 +347,76 @@ function ~/remote/unlinked_remote/link:
                 "width": 40,
                 "action": {
                     "type": "minecraft:dynamic/run_command",
-                    "template": "function reef:zzzinternals/remote/link {id: $(id)}"
+                    "template": "function reef:zzzinternals/remote/link_id {id: $(id)}"
+                }
+            }
+        ]
+    }
+
+function ~/remote/unlinked_remote/link_tag:
+    execute if entity @s[tag=!reef.permissions.use_remote] run return:
+        LOGGER.error("@s", ["You are not allowed to use this item. ", {text: "(Missing permissions: reef.permissions.use_remote)", color: "dark_gray"}])
+
+    execute unless items entity @s weapon.mainhand *[custom_data~{reef:{item:{id:"reef:remote",components:{"reef:link":{linked: false}}}}}] run return:
+        LOGGER.error("@s", "You can only perform this action when holding an unlinked Reef remote on your weapon.mainhand slot.")
+
+    dialog show @s {
+        "type": "minecraft:multi_action",
+        "title": {
+            "text": "Reef",
+            "color": "gray",
+            "italic": true
+        },
+        "body": {
+            "type": "minecraft:plain_message",
+            "contents": {
+                "text": "Link this remote to a screen"
+            }
+        },
+        "inputs": [
+            {
+                "type": "minecraft:text",
+                "key": "tags",
+                "width": 100,
+                "label": {
+                    "text": "Screen Tags",
+                    "color": "gray",
+                    "italic": true,
+                    "hover_event": {
+                        "action": "show_text",
+                        "value": [
+                            "Comma separated list\n",
+                            {"text": "Do not input any quote characters (' or \")", color: "red"}
+                        ]
+                    }
+                },
+                "initial": "tag_1,tag_2,tag_3",
+                "max_length": 2147483647
+            },
+        ],
+        "pause": false,
+        "actions": [
+            {
+                "label": {
+                    "text": "Switch to ID mode",
+                    "color": "aqua",
+                },
+                "width": 100,
+                "action": {
+                    "type": "minecraft:run_command",
+                    "command": "function reef:api/remote/unlinked_remote/link_id"
+                }
+            },
+            {
+                "label": {
+                    "text": "Link",
+                    "color": "light_purple",
+                    "bold": true
+                },
+                "width": 40,
+                "action": {
+                    "type": "minecraft:dynamic/run_command",
+                    "template": "function reef:zzzinternals/remote/link_tag {tags: [$(tags)]}"
                 }
             }
         ]
@@ -378,15 +457,51 @@ function ~/remote/linked_remote/load_remote_data:
     kill @n[type=item_display,tag=reef.item_store.linked_remote.temp]
 
 function ~/remote/linked_remote/prepare_screen_link:
-    IDLink = Scoreboard.objective("reef.zzzinternals.id_link")
-    ScreenID = Scoreboard.objective("reef.zzzinternals.screen.id")
-    IDLink[".compare_value"] = LinkedRemoteData.id
+    Success = Scoreboard.objective("reef.api.remote")["#success"]
+    Success = 0
 
-    execute unless entity @n[type=item_display,tag=reef.screen,predicate=reef:zzzinternals/id_link/screen] run return:
-        LOGGER.error("@s", "This screen doesn't exist! It may have been removed.")
-        LOGGER.error("@a[tag=reef.permissions.see_debug]", [{selector: "@s"}, " tried to use a linked remote to a screen that doesn't exist."])
-        return fail
-    return 1
+    # TODO: make these tag the selected screens instead
+
+    if LinkedRemoteData.id:
+        IDLink = Scoreboard.objective("reef.zzzinternals.id_link")
+        ScreenID = Scoreboard.objective("reef.zzzinternals.screen.id")
+        IDLink[".compare_value"] = LinkedRemoteData.id
+
+        execute unless entity @n[type=item_display,tag=reef.screen,predicate=reef:zzzinternals/id_link/screen] run return:
+            LOGGER.error("@s", "This screen doesn't exist! It may have been removed.")
+            LOGGER.error("@a[tag=reef.permissions.see_debug]", [{selector: "@s"}, " tried to use a linked remote to a screen that doesn't exist."])
+            Success = 0
+
+        tag @n[type=item_display,tag=reef.screen,predicate=reef:zzzinternals/id_link/screen] add reef.remote.selected_screen.temp
+
+        Success = 1
+    elif LinkedRemoteData.tags:
+        execute function ~/recurse_through_tags:
+            if not LinkedRemoteData.tags[-1]:
+                return 1
+            
+            LinkedRemoteData.current_tag = LinkedRemoteData.tags[-1]
+
+            with var LinkedRemoteData:
+                execute as @e[type=item_display,tag=reef.screen,tag=$(current_tag)]:
+                    tag @s add reef.remote.selected_screen.temp
+                    Success = 1
+
+            data remove var LinkedRemoteData.tags[-1]
+            function ~/
+
+        if Success != 1:
+            LOGGER.error("@s", "These screens dont exist! They may have been removed.")
+            LOGGER.error("@a[tag=reef.permissions.see_debug]", [{selector: "@s"}, " tried to use a linked remote to screens that don't exist."])
+            Success = 0
+            
+        DEV_LOGGER.info("@a", "Used remote in tag mode")
+    else:
+        LOGGER.error("@s", "Cannot load remote data. The `reef:link` component does not contain any of `id` or `tags`.")
+        Success = 0
+
+    execute if score var Success matches 1 run return 1
+    return fail
 
 function ~/remote/linked_remote/next:
     execute if entity @s[tag=!reef.permissions.use_remote] run return:
@@ -394,7 +509,8 @@ function ~/remote/linked_remote/next:
     function ~/../load_remote_data
     execute unless function ~/../prepare_screen_link run return fail
     tag @s add reef.player.remote_user.temp
-    execute as @n[type=item_display,tag=reef.screen,predicate=reef:zzzinternals/id_link/screen] run function reef:api/screen/next
+    execute as @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp] run function reef:api/screen/next
+    tag @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp] remove reef.remote.selected_screen.temp
     tag @s remove reef.player.remote_user.temp
     DEV_LOGGER.info("@a", "~/remote/next")
 
@@ -404,7 +520,8 @@ function ~/remote/linked_remote/prev:
     function ~/../load_remote_data
     execute unless function ~/../prepare_screen_link run return fail
     tag @s add reef.player.remote_user.temp
-    execute as @n[type=item_display,tag=reef.screen,predicate=reef:zzzinternals/id_link/screen] run function reef:api/screen/prev
+    execute as @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp] run function reef:api/screen/prev
+    tag @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp] remove reef.remote.selected_screen.temp
     tag @s remove reef.player.remote_user.temp
     DEV_LOGGER.info("@a", "~/remote/prev")
 
@@ -604,7 +721,8 @@ function ~/remote/linked_remote/load_slideshow:
     function ~/../load_remote_data
     execute unless function ~/../prepare_screen_link run return fail
     tag @s add reef.player.remote_user.temp
-    $execute as @n[type=item_display,tag=reef.screen,predicate=reef:zzzinternals/id_link/screen] run function reef:zzzinternals/screen/load_slideshow {id: '$(id)'}
+    $execute as @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp] run function reef:zzzinternals/screen/load_slideshow {id: '$(id)'}
+    tag @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp] remove reef.remote.selected_screen.temp
     tag @s remove reef.player.remote_user.temp
     DEV_LOGGER.info("@s", "LINKED_REMOTE/LOAD_SLIDESHOW")
 
@@ -614,7 +732,8 @@ function ~/remote/linked_remote/change_page:
     function ~/../load_remote_data
     execute unless function ~/../prepare_screen_link run return fail
     tag @s add reef.player.remote_user.temp
-    $execute as @n[type=item_display,tag=reef.screen,predicate=reef:zzzinternals/id_link/screen] run function reef:api/screen/set_page {page: $(page)}
+    $execute as @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp] run function reef:api/screen/set_page {page: $(page)}
+    tag @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp] remove reef.remote.selected_screen.temp
     tag @s remove reef.player.remote_user.temp
     DEV_LOGGER.info("@s", "LINKED_REMOTE/CHANGE_PAGE")
 
@@ -623,7 +742,8 @@ function ~/remote/linked_remote/clear_screen:
         LOGGER.error("@s", ["You are not allowed to use this item. ", {text: "(Missing permissions: reef.permissions.use_remote)", color: "dark_gray"}])
     function ~/../load_remote_data
     execute unless function ~/../prepare_screen_link run return fail
-    execute as @n[type=item_display,tag=reef.screen,predicate=reef:zzzinternals/id_link/screen] run function reef:zzzinternals/screen/thy_shall_prepare_to_burn_the_witches
+    execute as @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp] run function reef:zzzinternals/screen/thy_shall_prepare_to_burn_the_witches
+    tag @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp] remove reef.remote.selected_screen.temp
     DEV_LOGGER.info("@s", "LINKED_REMOTE/CLEAR_SCREEN")
 
 function ~/remote/linked_remote/remove_screen:
@@ -631,7 +751,7 @@ function ~/remote/linked_remote/remove_screen:
         LOGGER.error("@s", ["You are not allowed to use this item. ", {text: "(Missing permissions: reef.permissions.use_remote)", color: "dark_gray"}])
     function ~/../load_remote_data
     execute unless function ~/../prepare_screen_link run return fail
-    execute as @n[type=item_display,tag=reef.screen,predicate=reef:zzzinternals/id_link/screen]:
+    execute as @e[type=item_display,tag=reef.screen,tag=reef.remote.selected_screen.temp]:
         function reef:zzzinternals/screen/thy_shall_prepare_to_burn_the_witches
         kill @n[type=item_display,tag=reef.element.transition,predicate=reef:zzzinternals/id_link/parent/screen]
         kill @s

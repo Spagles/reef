@@ -44,6 +44,7 @@ function reef:uninstall:
     data remove storage reef.zzzinternals:tmp root
     data remove storage reef.zzzinternals:tmp register
 
+    scoreboard objectives remove reef.api.remote
     scoreboard objectives remove reef.zzzinternals.screen.id
     scoreboard objectives remove reef.zzzinternals.element.id
     scoreboard objectives remove reef.zzzinternals.element.animated_graphic.current_frame
