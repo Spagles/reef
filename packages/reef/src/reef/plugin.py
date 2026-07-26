@@ -1,14 +1,13 @@
-from beet import Context, Model, configurable
 import logging
 
+from beet import Context, Model, configurable
+
+from . import assets, data, state
 from .options import ReefPluginOptions
-from . import assets
-from . import data
-from . import state
 
 __all__ = [
-    "reef",
-    "beet_default"
+    "beet_default",
+    "reef"
 ]
 
 logger = logging.getLogger("reef")

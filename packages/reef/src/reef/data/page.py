@@ -1,24 +1,22 @@
 import json
 import logging
-from pathlib import Path
-from pydantic import BaseModel, Field, TypeAdapter, RootModel
-from typing import Any, ClassVar, Literal, Annotated, Union
+from typing import Annotated, Any, ClassVar, Literal
 
 from beet import (
     Context,
-    configurable,
     DataPack,
     Drop,
     Function,
     JsonFileBase,
     NamespaceFileScope,
+    configurable,
 )
+from pydantic import BaseModel, Field
 
-from .. import state
-from .. import models
+from .. import models, state
 from ..options import ReefPluginOptions
 
-__all__ = ["page", "ReefPageData"]
+__all__ = ["ReefPageData", "page"]
 
 PAGE_NAMESPACE = "reef/data/page"
 logger = logging.getLogger(PAGE_NAMESPACE)
@@ -55,11 +53,7 @@ class AnimatedGraphicElementModel(ElementBaseModel):
     frames: int
     
 ElementModel = Annotated[
-    Union[
-        GraphicElementModel,
-        TextElementModel,
-        AnimatedGraphicElementModel
-    ],
+    GraphicElementModel | TextElementModel | AnimatedGraphicElementModel,
     Field(discriminator="type")
 ]
 

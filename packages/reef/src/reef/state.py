@@ -1,4 +1,5 @@
 from beet import Context
+
 from .options import ReefPluginOptions
 
 ctx: Context = None # type: ignore

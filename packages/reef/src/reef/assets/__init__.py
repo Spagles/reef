@@ -3,5 +3,5 @@ __all__ = [
     "pdf",
 ]
 
-from .pdf import *
 from .element import *
+from .pdf import *

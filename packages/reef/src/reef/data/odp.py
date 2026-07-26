@@ -2,27 +2,24 @@ import json
 import logging
 import math
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import ClassVar
 
 from beet import (
     Context,
-    configurable,
     DataPack,
     Drop,
-    Function,
     File,
     NamespaceFileScope,
+    configurable,
 )
-
-from odfdo import Document, DrawPage, AnimPar, Element, Frame
+from odfdo import AnimPar, Document, DrawPage, Element, Frame
 
 from .. import state
-from ..models import ResourceLocation
 from ..options import ReefPluginOptions
 from .page import ReefPageData
 from .slideshow import ReefSlideshowData
 
-__all__ = ["odp", "ReefSpecialOdpData"]
+__all__ = ["ReefSpecialOdpData", "odp"]
 
 ODP_NAMESPACE = "reef/data/odp"
 logger = logging.getLogger(ODP_NAMESPACE)
@@ -68,7 +65,7 @@ class ReefSpecialOdpData(File):
         pages: list[DrawPage] = doc.content.get_elements("//office:presentation/draw:page") # type: ignore
         page_ids: list[str] = []
         
-        for i in range(0, len(pages)):
+        for i in range(len(pages)):
             current_page = pages[i]    
             page_ids.append(self.generate_page(pack, namespace, path, doc, current_page, i))
             

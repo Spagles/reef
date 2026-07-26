@@ -1,18 +1,15 @@
 import logging
-import json
+import re
 import shutil
 from pathlib import Path
-import re
 from tempfile import TemporaryDirectory
 from typing import Any, ClassVar
 
 import pdf2image
 from beet import (
     Context,
-    DataPack,
     Drop,
     File,
-    Function,
     ItemModel,
     Model,
     NamespaceFileScope,
@@ -83,7 +80,7 @@ class ReefPdfAsset(File):
                 with state.ctx.cache[PDF_NAMESPACE] as cache:
                     cache.timeout(hours=state.opts.cache_timeout_hours)
                     
-                    for i in range(0, len(uncached_images)):
+                    for i in range(len(uncached_images)):
                         image_path = uncached_images[i]
 
                         cache_path = cache.get_path(f"{namespace}:{path}/{i}.png")
@@ -106,7 +103,7 @@ class ReefPdfAsset(File):
 
         with state.ctx.cache[PDF_NAMESPACE] as cache:
             logger.debug("Loading images from cache...")
-            for i in range(0, pdf_info["Pages"]):
+            for i in range(pdf_info["Pages"]):
                 cache_path = cache.get_path(f"{namespace}:{path}/{i}.png")
                 
                 with Image.open(cache_path) as img:
@@ -152,7 +149,7 @@ class ReefPdfAsset(File):
 
         item_model_entries = []
 
-        for i in range(0, len(images)):
+        for i in range(len(images)):
             logger.debug("Bulding asset %s", f"{namespace}:{resource_location_path}/{i}")
             image = images[i]
             

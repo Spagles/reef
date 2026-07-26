@@ -1,25 +1,24 @@
 import json
 import logging
-from pathlib import Path
-from pydantic import BaseModel, Field, TypeAdapter, RootModel
-from typing import Any, ClassVar, Literal, Annotated, Union
+from typing import Annotated, ClassVar, Literal
 
 from beet import (
     Context,
-    configurable,
     DataPack,
     Drop,
     Function,
     JsonFileBase,
     NamespaceFileScope,
+    configurable,
 )
+from pydantic import BaseModel, Field, RootModel
 
 from .. import state
 from ..models import NumberString, ResourceLocation
 from ..options import ReefPluginOptions
 from .page import ElementModel, PageModel
 
-__all__ = ["special", "ReefSpecialData"]
+__all__ = ["ReefSpecialData", "special"]
 
 SPECIAL_NAMESPACE = "reef/data/special"
 logger = logging.getLogger(SPECIAL_NAMESPACE)
@@ -56,10 +55,7 @@ class ReefSpecialDataItemModelModel(ReefBaseSpecialDataModel):
     """Resource location pointing to the item model definition in `assets/<namespace>/items/<path>`."""
 
 class ReefSpecialDataModel(RootModel[Annotated[
-    Union[
-        ReefSpecialDataPdfModel,
-        ReefSpecialDataItemModelModel
-    ],
+    ReefSpecialDataPdfModel | ReefSpecialDataItemModelModel,
     Field(discriminator="type")
 ]]):
     pass

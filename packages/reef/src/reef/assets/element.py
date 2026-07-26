@@ -1,20 +1,19 @@
 import logging
-from pydantic import BaseModel, Field, RootModel
-from typing import ClassVar, Literal, Annotated, Union
+from typing import Annotated, ClassVar, Literal
 
 from beet import (
     Context,
-    configurable,
-    ResourcePack,
     Drop,
     ItemModel,
     JsonFileBase,
     Model,
     NamespaceFileScope,
+    ResourcePack,
+    configurable,
 )
+from pydantic import BaseModel, Field, RootModel
 
-from .. import state
-from .. import models
+from .. import models, state
 from ..options import ReefPluginOptions
 
 __all__ = ["element"]
@@ -34,10 +33,7 @@ class AnimatedElementAssetModel(BaseModel):
     frames: int
 
 class ElementAssetModel(RootModel[Annotated[
-    Union[
-        GraphicAssetModel,
-        AnimatedElementAssetModel
-    ],
+    GraphicAssetModel | AnimatedElementAssetModel,
     Field(discriminator="type")
 ]]):
     pass

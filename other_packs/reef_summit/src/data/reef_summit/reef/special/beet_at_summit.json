@@ -3,19 +3,9 @@
     "pdf": "reef_summit:beet_at_summit",
     "page_count": 57,
     "overrides": {
-        "12": {
-            "transition": "resource:location",
-            "commands": {
-                "on_enter": ["particle poof ~ ~ ~ 0 0 0 20 0.1 @a[distance=..20]"]
-            },
-            "sequence": [[{
-                "type": "animated_graphic",
-                "commands": {
-                    "on_enter": ["help me"]
-                },
-                "model": "resource:location",
-                "frames": 20
-            }]]
-        }
+        "1": {"commands": {"on_enter": ["tellraw @a Page 2"]}},
+        "2": {"commands": {"on_enter": ["tellraw @a Page 3"]}},
+        "3": {"commands": {"on_enter": ["tellraw @a Page 4"]}},
+        "4": {"commands": {"on_enter": ["tellraw @a Page 5"]}}
     }
 }

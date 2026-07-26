@@ -1,31 +1,28 @@
 import json
 import logging
-from pathlib import Path
-from pydantic import BaseModel, Field, TypeAdapter, RootModel
-from typing import Any, ClassVar, Literal, Annotated, Union
+from typing import ClassVar
 
 from beet import (
     Context,
-    configurable,
     DataPack,
     Drop,
     Function,
     JsonFileBase,
     NamespaceFileScope,
+    configurable,
 )
+from pydantic import RootModel
 
-from .. import state
-from .. import models
+from .. import models, state
 from ..options import ReefPluginOptions
 
-__all__ = ["slideshow", "ReefSlideshowData"]
+__all__ = ["ReefSlideshowData", "slideshow"]
 
 SLIDESHOW_NAMESPACE = "reef/data/slideshow"
 logger = logging.getLogger(SLIDESHOW_NAMESPACE)
 
 class SlideshowModel(RootModel[list[models.ResourceLocation]]):
     """See https://github.com/Trioplane/reef/wiki/definition_schemas#slideshow"""
-    pass
 
 class ReefSlideshowData(JsonFileBase):
     """Class representing Reef Slideshow files in data/ns/reef/slideshow"""
