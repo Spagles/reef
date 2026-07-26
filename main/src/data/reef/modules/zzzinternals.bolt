@@ -190,6 +190,9 @@ IDFunction("screen")
 function ~/screen/setup_entity:
     tag @s add reef.entity
     tag @s add reef.screen
+    data modify storage reef.zzzinternals:tmp root.screen.setup_entity.tags set value $(tags)
+    data modify entity @s Tags append from storage reef.zzzinternals:tmp root.screen.setup_entity.tags[]
+    data remove storage reef.zzzinternals:tmp root.screen.setup_entity.tags
     if G_ENVIRONMENT.name == "summit": 
         tag @s add summit.static
     function reef:zzzinternals/id/screen

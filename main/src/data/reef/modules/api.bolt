@@ -38,7 +38,7 @@ function ~/clear_registry:
     LOGGER.info("@s", "Cleared reef registry.")
 
 function ~/screen/summon:
-    execute summon item_display run function reef:zzzinternals/screen/setup_entity
+    $execute summon item_display run function reef:zzzinternals/screen/setup_entity {tags:$(tags)}
 
     particle minecraft:ominous_spawning ~ ~ ~ 0 0 0 0.2 10 normal @a[tag=reef.permissions.see_debug]
     particle minecraft:nautilus ~ ~1 ~ 0 0 0 1 10 normal @a[tag=reef.permissions.see_debug]
