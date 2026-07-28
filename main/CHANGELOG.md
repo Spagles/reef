@@ -9,7 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- *nothing yet...* 
+- Remotes linked to multiple screens
+  * Remotes can now be linked to either an ID or a Tag.
+  * This allows two or more screens to be controlled at once.
+- New API functions:
+    * `reef:api/screen/clear`
+    * `reef:api/screen/remove` 
+    * Logically the same as their equivalent remote API functions but this will need to be executed as a screen entity.
+- New remote API functions:
+    * `reef:api/remote/unlinked_remote/link_id`
+    * `reef:api/remote/unlinked_remote/link_tag`
+    * For multiscreen logic.
+
+### Changed
+
+- The `reef:api/screen/summon` API function now accepts macro arguments.
+  * `tags: list[str]` - Appends the tags to the summoned screen
+- Renamed `reef:api/remote/unlinked_remote/link` to `reef:api/remote/unlinked_remote/link_id`
 
 ## [1.0.0] - 2026-07-24
 

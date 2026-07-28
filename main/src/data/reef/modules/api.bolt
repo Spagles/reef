@@ -107,6 +107,14 @@ function ~/screen/prev:
     execute unless function reef:zzzinternals/screen/load_page run return fail
     function reef:zzzinternals/screen/transition_to_page
 
+function ~/screen/clear:
+    function reef:zzzinternals/screen/thy_shall_prepare_to_burn_the_witches
+
+function ~/screen/remove:
+    function reef:zzzinternals/screen/thy_shall_prepare_to_burn_the_witches
+    kill @n[type=item_display,tag=reef.element.transition,predicate=reef:zzzinternals/id_link/parent/screen]
+    kill @s
+
 # REMOTE STUFF
 
 loot_table reef:remote {
