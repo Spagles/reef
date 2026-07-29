@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- *nothing yet...*
+
+## [1.1.0]
+
+### Added
+
 - Remotes linked to multiple screens
   * Remotes can now be linked to either an ID or a Tag.
   * This allows two or more screens to be controlled at once.
