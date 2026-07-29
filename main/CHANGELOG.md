@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New remote API functions:
     * `reef:api/remote/unlinked_remote/link_id`
     * `reef:api/remote/unlinked_remote/link_tag`
-    * For multiscreen logic.
+    * For multi-screen-linking logic.
 
 ### Changed
 
