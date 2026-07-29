@@ -10,8 +10,8 @@ __all__ = [
     "Vector4"
 ]
 
-type ResourceLocation = Annotated[str, Field(pattern=r'^[0-9a-z_\-.]+:[0-9a-z_\-./]+$')]
 type NumberString = Annotated[str, Field(pattern=r'^[0-9]*$')]
+type ResourceLocation = Annotated[str, Field(pattern=r'^[0-9a-z_\-.]+:[0-9a-z_\-./]+$')]
 """Resource locations are a way to declare and specify game objects in Minecraft, which can identify built-in and user-defined objects without potential ambiguity or conflicts."""
 
 type Vector3 = tuple[float, float, float]

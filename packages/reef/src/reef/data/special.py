@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Annotated, ClassVar, Literal
+from typing import Annotated, ClassVar, Literal, Any
 
 from beet import (
     Context,
@@ -16,7 +16,8 @@ from pydantic import BaseModel, Field, RootModel
 from .. import state
 from ..models import NumberString, ResourceLocation
 from ..options import ReefPluginOptions
-from .page import ElementModel, PageModel
+from .page import ElementModel, PageModel, ReefPageData
+from .slideshow import ReefSlideshowData
 
 __all__ = ["ReefSpecialData", "special"]
 
@@ -71,24 +72,75 @@ class ReefSpecialData(JsonFileBase):
         super().bind(pack, path)
         
         namespace, _, path = path.partition(":")
+
+        json_data: ReefSpecialDataPdfModel | ReefSpecialDataItemModelModel = self.data.root
+
+        match(json_data.type):
+            case "reef:item_model":
+                self.generate_reef_mini_functions(pack, namespace, path, json_data.item_model)
+            case "reef:pdf":
+                if json_data.overrides is not None:
+                    self.generate_pdf_type(pack, namespace, path)
+                else:
+                    pdf_namespace, _, pdf_path = json_data.pdf.partition(":")
+                    self.generate_reef_mini_functions(pack, namespace, path, f"{pdf_namespace}:reef/mini/{pdf_path}")
         
-        self.generate_reef_mini_functions(pack, namespace, path)
             
         raise Drop()
+
+    def generate_pdf_type(
+        self,
+        pack: DataPack,
+        namespace: str,
+        path: str
+    ):
+        """Generates the function files for a PDF special reef file."""
+        identifier = f"{namespace}:{path}"
+        json_data: ReefSpecialDataPdfModel = self.data.root
+        pdf_namespace, _, pdf_path = json_data.pdf.partition(":")
+
+        slideshow = []
+
+        for i in range(0, json_data.page_count):
+            page_id = f"{identifier}/{i}"
+            page: dict[str, Any] = {
+                "sequence": [[{
+                    "type": "graphic",
+                    "model": f"{pdf_namespace}:reef/mini/{pdf_path}",
+                    "components": {"minecraft:custom_model_data": {"floats": [i]}},
+                    "pos": [0,0,0]
+                }]]
+            }
+
+            if json_data.transition is not None: page["transition"] = json_data.transition
+
+            if json_data.overrides is not None and str(i) in json_data.overrides is not None:
+                page_override = json_data.overrides[str(i)].model_dump()
+
+                if page_override.get("sequence") is not None: page["sequence"].append(*page_override["sequence"])
+                if page_override.get("commands") is not None: page["commands"] = page_override["commands"]
+                if page_override.get("transition") is not None: page["transition"] = page_override["transition"]
+
+            slideshow.append(page_id)
+            pack[ReefPageData][page_id] = ReefPageData(json.dumps(page))
+
+        pack[ReefSlideshowData][identifier] = ReefSlideshowData(json.dumps(slideshow))
+        
             
     def generate_reef_mini_functions(
         self, 
         pack: DataPack,
         namespace: str, 
-        path: str
+        path: str,
+        model_identifier: str
     ):
-        """Generates the function files to register a Reef Mini definition from a PDF or an Item Model."""
+        """Generates the function files to register a Reef Mini definition."""
         
         identifier = f"{namespace}:{path}"
         storage = f"{namespace}:reef"
         nbt_path = f'register.mini."{identifier}"'
         
-        json_info: ReefSpecialDataPdfModel | ReefSpecialDataItemModelModel = self.data.root
+        json_data: ReefSpecialDataPdfModel | ReefSpecialDataItemModelModel = self.data.root
         
         logger.debug("Building data %s", f"{namespace}:reef/{path}")
         
@@ -98,16 +150,10 @@ class ReefSpecialData(JsonFileBase):
         ]))
         
         mini_definition = {
-            "page_count": json_info.page_count,
-            **({"transition": json_info.transition} if json_info.transition is not None else {})
+            "page_count": json_data.page_count,
+            "model": model_identifier,
+            **({"transition": json_data.transition} if json_data.transition is not None else {})
         }
-        
-        match(json_info.type):
-            case "reef:pdf":
-                pdf_namespace, _, pdf_path = json_info.pdf.partition(":")
-                mini_definition["model"] = f"{pdf_namespace}:reef/mini/{pdf_path}"
-            case "reef:item_model":
-                mini_definition["model"] = json_info.item_model
         
         function_contents = Function([
             f'data modify storage {storage} {nbt_path} set value {json.dumps(mini_definition)}',
