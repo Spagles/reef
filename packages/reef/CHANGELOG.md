@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta7] - 2026-07-29
+
+### Added
+- Reef Special Data PDF type now accepts an `overrides` fields which lets you append normal Reef data into a PDF type.
+
 ## [1.0.0-beta6] - 2026-06-28
 
 ### Added
