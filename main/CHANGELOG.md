@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remotes linked to multiple screens
   * Remotes can now be linked to either an ID or a Tag.
   * This allows two or more screens to be controlled at once.
+  * ![Multilinked Remotes](https://raw.githubusercontent.com/Trioplane/reef/refs/heads/main/repository/multilinked_remotes.png)
 - New API functions:
     * `reef:api/screen/clear`
     * `reef:api/screen/remove` 
