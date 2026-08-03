@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta9] - 2026-08-03
+
+### Fixed
+- ACTUALLY fixed the fatal bug in PDF overrides generation for real this time.
+
+### Removed
+- Herobrine
+
 ## [1.0.0-beta8] - 2026-08-03
 
 ### Fixed
