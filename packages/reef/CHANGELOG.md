@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta8] - 2026-08-03
+
+### Fixed
+- Fatal bug in PDF overrides generation using `.append` instead of `.extend`.
+
 ## [1.0.0-beta7] - 2026-07-29
 
 ### Added

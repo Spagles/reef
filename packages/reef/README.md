@@ -9,7 +9,7 @@ Reef is a presentation library used to create stunning presentations in vanilla 
   * Asset Generation (textures, models, item models)
   * Data Generation (register functions)
   * Full Reef feature set
-    * ✅ Specifying a transition to use
+    * Specifying a transition to use
 - Manual JSON registry files (data/ns/reef/slideshow|page|transition) | (assets/ns/reef/element|pdf)
   * Data Generation
   * Asset Generation

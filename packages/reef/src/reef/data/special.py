@@ -117,7 +117,7 @@ class ReefSpecialData(JsonFileBase):
             if json_data.overrides is not None and str(i) in json_data.overrides is not None:
                 page_override = json_data.overrides[str(i)].model_dump()
 
-                if page_override.get("sequence") is not None: page["sequence"].append(*page_override["sequence"])
+                if page_override.get("sequence") is not None: page["sequence"].extend(*page_override["sequence"])
                 if page_override.get("commands") is not None: page["commands"] = page_override["commands"]
                 if page_override.get("transition") is not None: page["transition"] = page_override["transition"]
 
