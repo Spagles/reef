@@ -193,8 +193,6 @@ function ~/screen/setup_entity:
     data modify storage reef.zzzinternals:tmp root.screen.setup_entity.tags set value $(tags)
     data modify entity @s Tags append from storage reef.zzzinternals:tmp root.screen.setup_entity.tags[]
     data remove storage reef.zzzinternals:tmp root.screen.setup_entity.tags
-    if G_ENVIRONMENT.name == "summit": 
-        tag @s add summit.static
     function reef:zzzinternals/id/screen
 
     rotate @s ~ ~
@@ -480,8 +478,6 @@ function ~/screen/run_command_list:
 function ~/screen/display/text:
     function ~/../common
     tag @s add reef.element.text
-    if G_ENVIRONMENT.name == "summit": 
-        tag @s add summit.static
 
     Self = Data.entity("@s")
     ElementData = Self.data.reef.element_data
@@ -508,8 +504,6 @@ function ~/screen/display/text:
 function ~/screen/display/graphic:
     function ~/../common
     tag @s add reef.element.graphic
-    if G_ENVIRONMENT.name == "summit": 
-        tag @s add summit.static
 
     Self = Data.entity("@s")
     ElementData = Self.data.reef.element_data
