@@ -20,8 +20,8 @@ def beet_default(ctx: Context):
 @configurable(validator=ReefPluginOptions)
 def reef(ctx: Context, opts: ReefPluginOptions):
     """Initializes the Reef plugin system"""
-    logger.debug("Creating base assets...") 
- 
+    logger.debug("Creating base assets...")
+
     ctx.assets["reef"].models["item/element_base"] = Model({
         "credit": "Generated with Reef",
         "ambientocclusion": False,
@@ -42,6 +42,7 @@ def reef(ctx: Context, opts: ReefPluginOptions):
     logger.debug("Created reef:item/element_base")
 
     ctx.require(assets.element)
+    ctx.require(assets.pdf_mcmeta)
     ctx.require(assets.pdf)
     ctx.require(data.special)
     #ctx.require(data.odp) # CURRENTLY UNSTABLE!

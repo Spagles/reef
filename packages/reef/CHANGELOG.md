@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- The `overrides` field is now available for both Reef special data types.
+
 ## [1.0.0-beta9] - 2026-08-03
 
 ### Fixed

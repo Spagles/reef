@@ -21,8 +21,9 @@ from PIL import Image
 
 from .. import state
 from ..options import ReefPluginOptions
+from .pdf_mcmeta import ReefPdfMcmeta
 
-__all__ = ["pdf"]
+__all__ = ["ReefPdfAsset", "pdf"]
 
 PDF_NAMESPACE = "reef/assets/pdf"
 logger = logging.getLogger(PDF_NAMESPACE)
@@ -50,7 +51,7 @@ class ReefPdfAsset(File):
         # Cache the original PDF
         state.ctx.cache[PDF_NAMESPACE].download(pdf_path.as_uri())
         logger.debug("Cached pdf %s (%s)", f"{namespace}:{path}", pdf_path)
-        
+
         # Cache the plugin options
         opts_dict = state.opts.model_dump()
         with state.ctx.cache[PDF_NAMESPACE] as cache:
@@ -79,18 +80,18 @@ class ReefPdfAsset(File):
                 # Cache the images
                 with state.ctx.cache[PDF_NAMESPACE] as cache:
                     cache.timeout(hours=state.opts.cache_timeout_hours)
-                    
+
                     for i in range(len(uncached_images)):
                         image_path = uncached_images[i]
 
                         cache_path = cache.get_path(f"{namespace}:{path}/{i}.png")
-                        
+
                         shutil.copyfile(image_path, cache_path)
 
                         logger.debug("Cached %s (%s)", f"{namespace}:{path}/{i}.png", cache_path)
 
             logger.debug("Done caching!")
-        
+
         # Get PDF debug
         # NOTE: oh my god why is pdf2image typed so horribly
         pdf_info = pdf2image.pdfinfo_from_path(
@@ -105,28 +106,43 @@ class ReefPdfAsset(File):
             logger.debug("Loading images from cache...")
             for i in range(pdf_info["Pages"]):
                 cache_path = cache.get_path(f"{namespace}:{path}/{i}.png")
-                
+
                 with Image.open(cache_path) as img:
                     images.append(img.copy())
                     logger.debug("Copied %s (%s)", f"{namespace}:{path}/{i}.png", cache_path)
 
+        # Find if there is a matching .pdf.mcmeta and get the page size
+        pdf_mcmeta_file = state.ctx.assets[ReefPdfMcmeta].get(f"{namespace}:{path}")
+        page_size: tuple[float, float]
+
+        logger.warning(pdf_mcmeta_file)
+
+        if pdf_mcmeta_file is not None:
+            page_size = (pdf_mcmeta_file.data.size[0], pdf_mcmeta_file.data.size[1])
+            logger.debug(f"FOUND PDF MCMETA FILE {namespace}:{path}")
+            logger.debug(pdf_mcmeta_file.data)
+        else:
+            logger.warning(f"COULNDT FIND MCMETA FILE {namespace}:{path}")
+            logger.warning("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC")
+            logger.warning(state.ctx.assets[ReefPdfMcmeta].keys())
+            pdf_size_match = re.match(r"([\d.]+) x ([\d.]+) pts", pdf_info["Page size"])
+
+            if not pdf_size_match:
+                raise ValueError(f'Could not parse page size from: "{pdf_info['Page size']}" ({namespace}:{path})')
+
+            page_size = (float(pdf_size_match.group(1)), float(pdf_size_match.group(2)))
+
         # Generate the resource pack assets
-        match = re.match(r"([\d.]+) x ([\d.]+) pts", pdf_info["Page size"])
-        
-        if not match:
-            raise ValueError(f'Could not parse page size from: "{pdf_info['Page size']}" ({namespace}:{path})')
-        
-        page_size = (float(match.group(1)), float(match.group(2)))
         self.generate_assets(pack, namespace, path, images, page_size)
-        
+
         # Prevent the PDF itself from getting put into the resource pack
         raise Drop()
 
     def generate_assets(
-        self, 
-        pack: ResourcePack, 
-        namespace: str, 
-        path: str, 
+        self,
+        pack: ResourcePack,
+        namespace: str,
+        path: str,
         images: list[Image.Image],
         page_size: tuple[float, float]
     ) -> None:
@@ -138,9 +154,9 @@ class ReefPdfAsset(File):
             0.5 - page_size[1] / 16
         )
         transformation_matrix = [
-            page_size[0], 0,            0, offset[0], 
-            0,            page_size[1], 0, offset[1], 
-            0,            0,            1,       0.5, 
+            page_size[0], 0,            0, offset[0],
+            0,            page_size[1], 0, offset[1],
+            0,            0,            1,       0.5,
             0,            0,            0,       1
         ]
 
@@ -152,7 +168,7 @@ class ReefPdfAsset(File):
         for i in range(len(images)):
             logger.debug("Bulding asset %s", f"{namespace}:{resource_location_path}/{i}")
             image = images[i]
-            
+
             # Texture at `assets/<ns>/textures/item/reef/mini/<pdf_name>/<page>`
             pack[namespace].textures[f"item/{resource_location_path}/{i}"] = Texture(image)
 
@@ -193,6 +209,7 @@ class ReefPdfAsset(File):
         })
 
         logger.debug("Done building resource pack files!")
+
 
 @configurable("reef", validator=ReefPluginOptions)
 def pdf(ctx: Context, opts: ReefPluginOptions):
