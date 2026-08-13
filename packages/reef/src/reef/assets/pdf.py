@@ -8,7 +8,6 @@ from typing import Any, ClassVar
 import pdf2image
 from beet import (
     Context,
-    Drop,
     File,
     ItemModel,
     Model,
@@ -34,14 +33,14 @@ class ReefPdfAsset(File):
     scope: ClassVar[NamespaceFileScope] = ("reef", "pdf")
     extension: ClassVar[str] = ".pdf"
 
-    def bind(self, pack: ResourcePack, path: str):
-        super().bind(pack, path)
+    @staticmethod
+    def _build_file(file: ReefPdfAsset, pack: ResourcePack, path: str):
         poppler_path: dict[str, Any] = {"poppler_path": state.opts.pdf.poppler_path} if state.opts.pdf.poppler_path is not None else {}
 
         # Variables -----------
 
         namespace, _, path = path.partition(":")
-        pdf_path = Path(self.ensure_source_path())
+        pdf_path = Path(file.ensure_source_path())
 
         # ---------------------
 
@@ -115,16 +114,10 @@ class ReefPdfAsset(File):
         pdf_mcmeta_file = state.ctx.assets[ReefPdfMcmeta].get(f"{namespace}:{path}")
         page_size: tuple[float, float]
 
-        logger.warning(pdf_mcmeta_file)
-
         if pdf_mcmeta_file is not None:
-            page_size = (pdf_mcmeta_file.data.size[0], pdf_mcmeta_file.data.size[1])
             logger.debug(f"FOUND PDF MCMETA FILE {namespace}:{path}")
-            logger.debug(pdf_mcmeta_file.data)
+            page_size = (pdf_mcmeta_file.data.size[0], pdf_mcmeta_file.data.size[1])
         else:
-            logger.warning(f"COULNDT FIND MCMETA FILE {namespace}:{path}")
-            logger.warning("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC")
-            logger.warning(state.ctx.assets[ReefPdfMcmeta].keys())
             pdf_size_match = re.match(r"([\d.]+) x ([\d.]+) pts", pdf_info["Page size"])
 
             if not pdf_size_match:
@@ -133,10 +126,7 @@ class ReefPdfAsset(File):
             page_size = (float(pdf_size_match.group(1)), float(pdf_size_match.group(2)))
 
         # Generate the resource pack assets
-        self.generate_assets(pack, namespace, path, images, page_size)
-
-        # Prevent the PDF itself from getting put into the resource pack
-        raise Drop()
+        file.generate_assets(pack, namespace, path, images, page_size)
 
     def generate_assets(
         self,
@@ -215,4 +205,13 @@ class ReefPdfAsset(File):
 def pdf(ctx: Context, opts: ReefPluginOptions):
     """Adds support for Reef PDF files to generate Reef Mini compatible files."""
 
+    ctx.assets.extend_namespace.append(ReefPdfMcmeta)
     ctx.assets.extend_namespace.append(ReefPdfAsset)
+
+    yield
+
+    for path, file in ctx.assets[ReefPdfAsset].items():
+        ReefPdfAsset._build_file(file, ctx.assets, path)
+
+    ctx.assets[ReefPdfMcmeta].clear()
+    ctx.assets[ReefPdfAsset].clear()

@@ -42,7 +42,6 @@ def reef(ctx: Context, opts: ReefPluginOptions):
     logger.debug("Created reef:item/element_base")
 
     ctx.require(assets.element)
-    ctx.require(assets.pdf_mcmeta)
     ctx.require(assets.pdf)
     ctx.require(data.special)
     #ctx.require(data.odp) # CURRENTLY UNSTABLE!

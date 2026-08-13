@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Annotated, ClassVar, Literal, Any
+from typing import Annotated, Any, ClassVar, Literal
 
 from beet import (
     Context,

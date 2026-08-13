@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- MCMeta file for PDFs to override the size of the generated assets.
+  * This won't change the resolution of the image. It only changes the scale of the image inside the world.
+  * Currently a `.pdf.mcmeta` file containing a `size` field which accepts a tuple of two floats.
+
 ### Changed
 - The `overrides` field is now available for both Reef special data types.
 
