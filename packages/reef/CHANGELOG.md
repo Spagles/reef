@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added
+
+- *nothing yet...*
+
+## [1.0.0-beta10]
+
 ### Added
 
 - MCMeta file for PDFs to override the size of the generated assets.
