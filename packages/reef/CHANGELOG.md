@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - *nothing yet...*
 
+## [1.0.0-beta11]
+
+### Fixed
+
+- odfdo missing in main dependencies.
+
 ## [1.0.0-beta10]
 
 ### Added
