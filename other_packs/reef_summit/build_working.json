@@ -1,0 +1,35 @@
+{
+    "author": "Trplnr",
+    "name": "working_panel",
+    "description": "Panel developing",
+    "version": "1.0.0",
+    "minecraft": "26.2",
+    "data_pack": {
+        "load": ["working"],
+        "min_format": [107,1],
+        "max_format": [107,1]
+    },
+    "resource_pack": {
+        "load": ["working"],
+        "min_format": [88,0],
+        "max_format": [88,0]
+    },
+    "pipeline": ["mecha"],
+    "require": [
+        "reef",
+        "plugins.panels.custom_resource"
+    ],
+    "meta": {
+        "reef": {
+            "compress_functions": true,
+            "tint": 66046,
+            "pdf": {
+                "dpi": 144
+            },
+            "odp": {
+                "cm_per_block": 1
+            }
+        }
+    },
+    "output": "build"
+}
