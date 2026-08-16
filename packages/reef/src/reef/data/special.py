@@ -164,10 +164,10 @@ class ReefSpecialData(JsonFileBase):
         ])
 
         if not state.opts.compress_functions:
-            pack[namespace].functions[f"reef/register/page/{path}"] = function_contents
+            pack[namespace].functions[f"reef/register/mini/{path}"] = function_contents
 
             register_main.append([
-                f"function {namespace}:reef/register/page/{path}"
+                f"function {namespace}:reef/register/mini/{path}"
             ])
         else:
             register_main.append(function_contents)
