@@ -640,11 +640,11 @@ function ~/remote/link_id:
     execute unless entity @e[type=item_display,tag=reef.screen,predicate=reef:zzzinternals/id_link/screen] run return:
         LOGGER.error("@s", ["Screen #", {score: {name: ".compare_value", objective: "reef.zzzinternals.id_link"}}, " not found"])
 
-    $item modify entity @s weapon.mainhand [{function:"minecraft:set_components",components:{"minecraft:item_name":["",{text:"Linked Remote",color:"light_purple"},{text:" | ",color:"dark_gray"},{text:"Screen ID: ",color:"gray"},{text: "$(id)",color:"light_purple"}]}},{function:"minecraft:set_custom_data",tag:{reef:{item:{components:{"reef:link":{linked:true,id:$(id)}}}}}}]
+    $item modify entity @s weapon.mainhand [{function:"minecraft:set_components",components:{"minecraft:item_name":["",{text:"Linked Remote",color:"light_purple"},{text:" | ",color:"dark_gray"},{text:"Screen ID: ",color:"gray"},{text: "$(id)",color:"light_purple"}]}},{function:"minecraft:set_custom_data",tag:{reef:{item:{id:"reef:remote",components:{"reef:link":{linked:true,id:$(id)}}}}}}]
     LOGGER.info("@s", ["Successfully linked remote to screen #", {score: {name: ".compare_value", objective: "reef.zzzinternals.id_link"}}])
     LOGGER.info("@a[tag=reef.permissions.see_debug]", [{selector: "@s"}, " linked a remote to screen #", {score: {name: ".compare_value", objective: "reef.zzzinternals.id_link"}}])
 
 function ~/remote/link_tag:
-    $item modify entity @s weapon.mainhand [{function:"minecraft:set_components",components:{"minecraft:item_name":["",{text:"Linked Remote",color:"light_purple"},{text:" | ",color:"dark_gray"},{text:"Screen Tags: ",color:"gray"},{text: '$(tags)',color:"light_purple"}]}},{function:"minecraft:set_custom_data",tag:{reef:{item:{components:{"reef:link":{linked:true,tags:$(tags)}}}}}}]
+    $item modify entity @s weapon.mainhand [{function:"minecraft:set_components",components:{"minecraft:item_name":["",{text:"Linked Remote",color:"light_purple"},{text:" | ",color:"dark_gray"},{text:"Screen Tags: ",color:"gray"},{text: '$(tags)',color:"light_purple"}]}},{function:"minecraft:set_custom_data",tag:{reef:{item:{id:"reef:remote",components:{"reef:link":{linked:true,tags:$(tags)}}}}}}]
     $tellraw @s [['', {'text': '[', 'color': '#6e3787'}, {'text': 'reef', 'color': '#ed2de3'}, {'text': '] ', 'color': '#6e3787'}], [{'text': '', 'color': '#77d6ff'}, 'Successfully linked remote to screen tags: $(tags)']]
     $tellraw @a[tag=reef.permissions.see_debug] [['', {'text': '[', 'color': '#6e3787'}, {'text': 'reef', 'color': '#ed2de3'}, {'text': '] ', 'color': '#6e3787'}], [{'text': '', 'color': '#77d6ff'}, {'selector': '@s'}, ' linked a remote to screen tags: $(tags)']]
