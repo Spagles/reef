@@ -139,7 +139,7 @@ class BacklightDefinitionFile(JsonFileBase):
         pack[namespace].textures[f"item/backlight/{path}"] = Texture(spritesheet)
         pack[namespace].textures_mcmeta[f"item/backlight/{path}"] = TextureMcmeta({
             "animation": {
-                "frametime": 20 - (self.data.fps - 1) if self.data.frametime is None else self.data.frametime,
+                "frametime": max(1, round(20 / self.data.fps)) if self.data.frametime is None else self.data.frametime,
                 "interpolate": self.data.interpolate,
                 "width": 1,
                 "height": 1
