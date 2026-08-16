@@ -35,7 +35,7 @@ class ReefBaseSpecialDataModel(BaseModel):
     """Content overrides for specific pages."""
 
 class ReefSpecialDataPdfPageModel(PageModel):
-    sequence: list[list[ElementModel]] | None = None # type: ignore
+    sequence: list[list[ElementModel]] | None = None
 
 class ReefSpecialDataPdfModel(ReefBaseSpecialDataModel):
     """A Reef Mini definition using PDF files."""
@@ -118,7 +118,9 @@ class ReefSpecialData(JsonFileBase):
             if json_data.overrides is not None and str(i) in json_data.overrides is not None:
                 page_override = json_data.overrides[str(i)].model_dump()
 
-                if page_override.get("sequence") is not None: page["sequence"].extend(page_override["sequence"])
+                if page_override.get("sequence") is not None: 
+                    page["sequence"][0].extend(page_override["sequence"][0])
+                    page["sequence"].extend(page_override["sequence"][1:])
                 if page_override.get("commands") is not None: page["commands"] = page_override["commands"]
                 if page_override.get("transition") is not None: page["transition"] = page_override["transition"]
 
