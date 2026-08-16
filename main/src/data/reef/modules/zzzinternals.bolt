@@ -536,7 +536,7 @@ function ~/screen/display/animated_graphic:
         Self.item.components = ElementData.components
 
     Self.item.components."minecraft:item_model" = ElementData.model
-    Self.item.components."minecraft:custom_model_data" = {floats:[0]}
+    Self.item.components."minecraft:custom_model_data" = {floats:[1]}
 
     CurrentFrame["@s"] = 0
     Frames["@s"] = ElementData.frames
