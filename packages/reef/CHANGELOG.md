@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - *nothing yet...*
 
+## [1.0.0-beta12]
+
+## Changed
+
+- The first index of the override sequence now appends its elements to the first index of the page sequence.
+  * This means that override sequences can now use the first index to spawn elements or other stuff right when the screen switches pages.
+
 ## [1.0.0-beta11]
 
 ### Fixed

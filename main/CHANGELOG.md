@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - *nothing yet...*
 
+# [1.1.1]
+
+### Fixed
+
+- Animated elements showing a missingno in the first frame.
+
 ## [1.1.0]
 
 ### Added
